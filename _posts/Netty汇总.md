@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      (Netty's note)
+subtitle:   (副标题)
+date:       2023-3-11
+author:     nullscientist
+header-img: img/the-first.png
+catalog:   true
+tags:
+    - Bio、Netty
+---
+
 # 一. NIO 基础
 
 non-blocking io 非阻塞 IO
