@@ -209,31 +209,31 @@ ByteBuffer 有以下重要属性
 
 一开始
 
-![](../img/Netty汇总.assets/0021.png)
+![](../img/Netty.assets/0021.png)
 
 写模式下，position 是写入位置，limit 等于容量，下图表示写入了 4 个字节后的状态
 
-![](../img/Netty汇总.assets/0018.png)
+![](../img/Netty.assets/0018.png)
 
 flip 动作发生后，position 切换为读取位置，limit 切换为读取限制
 
-![](../img/Netty汇总.assets/0019.png)
+![](../img/Netty.assets/0019.png)
 
 读取 4 个字节后，状态
 
-![](../img/Netty汇总.assets/0020.png)
+![](../img/Netty.assets/0020.png)
 
 clear 动作发生后，状态
 
-![](../img/Netty汇总.assets/0021.png)
+![](../img/Netty.assets/0021.png)
 
 compact 方法，是把未读完的部分向前压缩，然后切换至写模式
 
-![](../img/Netty汇总.assets/0022.png)
+![](../img/Netty.assets/0022.png)
 
 > 如下图，compact 实际上是元素往前移动，但是由于position的位置刚好覆盖掉重复的位置，因此后续直接写入或者 `flip()`(limit=position) 后读取数据都无影响
 >
-> ![image-20230223103903934](../img/Netty汇总.assets/image-20230223103903934.png)
+> ![image-20230223103903934](../img/Netty.assets/image-20230223103903934.png)
 
 
 
@@ -507,7 +507,7 @@ public class TestByteBufferString {
 
 前3个输出：
 
-> ![image-20230305193943200](../img/Netty汇总.assets/image-20230305193943200.png)
+> ![image-20230305193943200](../img/Netty.assets/image-20230305193943200.png)
 
 后两个输出
 
@@ -1580,7 +1580,7 @@ ld�
 
 #### 处理消息的边界
 
-![](../img/Netty汇总.assets/0023.png)
+![](../img/Netty.assets/0023.png)
 
 * 一种思路是固定消息长度，数据包大小一样，服务器按预定长度读取，缺点是浪费带宽
 * 另一种思路是按分隔符拆分，缺点是效率低
@@ -2088,31 +2088,31 @@ public class UdpClient {
 * 等待数据阶段
 * 复制数据阶段
 
-![](../img/Netty汇总.assets/0033.png)
+![](../img/Netty.assets/0033.png)
 
 * 阻塞 IO
 
-  ![](../img/Netty汇总.assets/0039.png)
+  ![](../img/Netty.assets/0039.png)
 
 * 非阻塞  IO
 
-  ![](../img/Netty汇总.assets/0035.png)
+  ![](../img/Netty.assets/0035.png)
 
 * 多路复用
 
-  ![](../img/Netty汇总.assets/0038.png)
+  ![](../img/Netty.assets/0038.png)
 
 * 信号驱动
 
 * 异步 IO
 
-  ![](../img/Netty汇总.assets/0037.png)
+  ![](../img/Netty.assets/0037.png)
 
 * 阻塞 IO vs 多路复用
 
-  ![](../img/Netty汇总.assets/0034.png)
+  ![](../img/Netty.assets/0034.png)
 
-  ![](../img/Netty汇总.assets/0036.png)
+  ![](../img/Netty.assets/0036.png)
 
 #### 🔖 参考
 
@@ -2139,7 +2139,7 @@ socket.getOutputStream().write(buf);
 
 内部工作流程是这样的：
 
-![](../img/Netty汇总.assets/0024.png)
+![](../img/Netty.assets/0024.png)
 
 1. java 本身并不具备 IO 读写能力，因此 read 方法调用后，要从 java 程序的**用户态**切换至**内核态**，去调用操作系统（Kernel）的读能力，将数据读入**内核缓冲区**。这期间用户线程阻塞，操作系统使用 DMA（Direct Memory Access）来实现文件读，其间也不会使用 cpu
 
@@ -2167,7 +2167,7 @@ socket.getOutputStream().write(buf);
 * ByteBuffer.allocate(10)  HeapByteBuffer 使用的还是 java 内存
 * ByteBuffer.allocateDirect(10)  DirectByteBuffer 使用的是操作系统内存
 
-![](../img/Netty汇总.assets/0025.png)
+![](../img/Netty.assets/0025.png)
 
 大部分步骤与优化前相同，不再赘述。唯有一点：java 可以使用 DirectByteBuf 将堆外内存映射到 jvm 内存中来直接访问使用
 
@@ -2181,7 +2181,7 @@ socket.getOutputStream().write(buf);
 
 进一步优化（底层采用了 linux 2.1 后提供的 sendFile 方法），java 中对应着两个 channel 调用 transferTo/transferFrom 方法拷贝数据
 
-![](../img/Netty汇总.assets/0026.png)
+![](../img/Netty.assets/0026.png)
 
 1. java 调用 transferTo 方法后，要从 java 程序的**用户态**切换至**内核态**，使用 DMA将数据读入**内核缓冲区**，不会使用 cpu
 2. 数据从**内核缓冲区**传输到 **socket 缓冲区**，cpu 会参与拷贝
@@ -2196,7 +2196,7 @@ socket.getOutputStream().write(buf);
 
 进一步优化（linux 2.4）
 
-![](../img/Netty汇总.assets/0027.png)
+![](../img/Netty.assets/0027.png)
 
 1. java 调用 transferTo 方法后，要从 java 程序的**用户态**切换至**内核态**，使用 DMA将数据读入**内核缓冲区**，不会使用 cpu
 2. 只会将一些 offset 和 length 信息拷入 **socket 缓冲区**，几乎无消耗
@@ -2419,7 +2419,7 @@ Netty 是一个异步的、基于事件驱动的网络应用框架，用于快�
 
 ### 1.2 Netty 的作者
 
-![](../img/Netty汇总.assets/0005.png)
+![](../img/Netty.assets/0005.png)
 
 他还是另一个著名网络应用框架 Mina 的重要贡献者
 
@@ -2513,7 +2513,7 @@ new ServerBootstrap()
 
 * 2 处，选择服务 Scoket 实现类，其中 NioServerSocketChannel 表示基于 NIO 的服务器端实现，其它实现还有
 
-  ![](../img/Netty汇总.assets/0006.png)
+  ![](../img/Netty.assets/0006.png)
 
 * 3 处，为啥方法叫 childHandler，是接下来添加的处理器都是给 SocketChannel 用的，而不是给 ServerSocketChannel。ChannelInitializer 处理器（仅执行一次），它的作用是待客户端 SocketChannel 建立连接后，执行 initChannel 以便添加更多的处理器
 
@@ -2549,7 +2549,7 @@ new Bootstrap()
 
 * 2 处，选择客户 Socket 实现类，NioSocketChannel 表示基于 NIO 的客户端实现，其它实现还有
 
-  ![](../img/Netty汇总.assets/0007.png)
+  ![](../img/Netty.assets/0007.png)
 
 * 3 处，添加 SocketChannel 的处理器，ChannelInitializer 处理器（仅执行一次），它的作用是待客户端 SocketChannel 建立连接后，执行 initChannel 以便添加更多的处理器
 
@@ -2569,7 +2569,7 @@ new Bootstrap()
 
 ### 2.4 流程梳理
 
-![](../img/Netty汇总.assets/0040.png)
+![](../img/Netty.assets/0040.png)
 
 #### 💡 提示
 
@@ -2719,7 +2719,7 @@ public static void main(String[] args) throws InterruptedException {
 
 可以看到两个工人轮流处理 channel，但工人与 channel 之间进行了绑定
 
-![](../img/Netty汇总.assets/0042.png)
+![](../img/Netty.assets/0042.png)
 
 
 
@@ -2815,7 +2815,7 @@ new ServerBootstrap()
 
 
 
-![](../img/Netty汇总.assets/0041.png)
+![](../img/Netty.assets/0041.png)
 
 
 
@@ -3069,7 +3069,7 @@ public class CloseFutureClient {
 
 思考下面的场景，4 个医生给人看病，每个病人花费 20 分钟，而且医生看病的过程中是以病人为单位的，一个病人看完了，才能看下一个病人。假设病人源源不断地来，可以计算一下 4 个医生一天工作 8 小时，处理的病人总数是：`4 * 8 * 3 = 96`
 
-![](../img/Netty汇总.assets/0044.png)
+![](../img/Netty.assets/0044.png)
 
 
 
@@ -3087,7 +3087,7 @@ public class CloseFutureClient {
 
 经研究发现，看病可以细分为四个步骤，经拆分后每个步骤需要 5 分钟，如下
 
-![](../img/Netty汇总.assets/0048.png)
+![](../img/Netty.assets/0048.png)
 
 
 
@@ -3101,7 +3101,7 @@ public class CloseFutureClient {
 
 因此可以做如下优化，只有一开始，医生 2、3、4 分别要等待 5、10、15 分钟才能执行工作，但只要后续病人源源不断地来，他们就能够满负荷工作，并且处理病人的能力提高到了 `4 * 8 * 12` 效率几乎是原来的四倍
 
-![](../img/Netty汇总.assets/0047.png)
+![](../img/Netty.assets/0047.png)
 
 要点
 
@@ -3493,7 +3493,7 @@ new Bootstrap()
 
 可以看到，ChannelInboundHandlerAdapter 是按照 addLast 的顺序执行的，而 ChannelOutboundHandlerAdapter 是按照 addLast 的逆序执行的。ChannelPipeline 的实现是一个 ChannelHandlerContext（包装了 ChannelHandler） 组成的双向链表
 
-![](../img/Netty汇总.assets/0008.png)
+![](../img/Netty.assets/0008.png)
 
 * 入站处理器中，ctx.fireChannelRead(msg) 是 **调用下一个入站处理器**
   * 如果注释掉 1 处代码，则仅会打印 1
@@ -3513,7 +3513,7 @@ new Bootstrap()
 
 图1 - 服务端 pipeline 触发的原始流程，图中数字代表了处理步骤的先后次序
 
-![](../img/Netty汇总.assets/0009.png)
+![](../img/Netty.assets/0009.png)
 
 
 
@@ -3596,7 +3596,7 @@ ByteBuf buffer = ByteBufAllocator.DEFAULT.directBuffer(10);
 
 ByteBuf 由四部分组成
 
-![](../img/Netty汇总.assets/0010.png)
+![](../img/Netty.assets/0010.png)
 
 最开始读写指针都在 0 位置
 
@@ -3859,7 +3859,7 @@ public static boolean release(Object msg) {
 
 【零拷贝】的体现之一，对原始 ByteBuf 进行切片成多个 ByteBuf，切片后的 ByteBuf 并没有发生内存复制，还是使用原始 ByteBuf 的内存，切片后的 ByteBuf 维护独立的 read，write 指针
 
-![](../img/Netty汇总.assets/0011.png)
+![](../img/Netty.assets/0011.png)
 
 例，原始 ByteBuf 进行一些初始操作
 
@@ -3970,7 +3970,7 @@ System.out.println(ByteBufUtil.prettyHexDump(origin));
 
 【零拷贝】的体现之一，就好比截取了原始 ByteBuf 所有内容，并且没有 max capacity 的限制，也是与原始 ByteBuf 使用同一块底层内存，只是读写指针是独立的
 
-![](../img/Netty汇总.assets/0012.png)
+![](../img/Netty.assets/0012.png)
 
 
 
@@ -4495,13 +4495,13 @@ serverBootstrap.option(ChannelOption.SO_RCVBUF, 10);
 >
 > * TCP 以一个段（segment）为单位，每发送一个段就需要进行一次确认应答（ack）处理，但如果这么做，缺点是包的往返时间越长性能就越差
 >
->   ![](../img/Netty汇总.assets/0049.png)
+>   ![](../img/Netty.assets/0049.png)
 >
 > 
 >
 > * 为了解决此问题，引入了窗口概念，窗口大小即决定了无需等待应答而可以继续发送的数据最大值
 >
->   ![](../img/Netty汇总.assets/0051.png)
+>   ![](../img/Netty.assets/0051.png)
 >
 > * 窗口实际就起到一个缓冲区的作用，同时也能起到流量控制的作用
 >
@@ -4526,7 +4526,7 @@ serverBootstrap.option(ChannelOption.SO_RCVBUF, 10);
 >   * TCP 在传递大量数据时，会按照 MSS 大小将数据进行分割发送
 >   * MSS 的值在三次握手时通知对方自己 MSS 的值，然后在两者之间选择一个小值作为 MSS
 >
->   <img src="../img/Netty汇总.assets/0031.jpg" style="zoom:50%;" />
+>   <img src="../img/Netty.assets/0031.jpg" style="zoom:50%;" />
 
 
 
@@ -5357,7 +5357,7 @@ channel.writeInbound(s2);
 
 解读
 
-![](../img/Netty汇总.assets/0013.png)
+![](../img/Netty.assets/0013.png)
 
 
 
@@ -7402,7 +7402,7 @@ protected void run() {
 
 参考下图
 
-<img src="../img/Netty汇总.assets/0032.png"  />
+<img src="../img/Netty.assets/0032.png"  />
 
 
 
