@@ -209,8 +209,7 @@ ByteBuffer 有以下重要属性
 
 一开始
 
-![](https://github.com/nullScientist/nullScientist.github.io/blob/master/img/Netty.assets/0021.png)
-<img src="../img/Netty.assets/0021.png">
+![](../img/Netty.assets/0021.png)
 
 写模式下，position 是写入位置，limit 等于容量，下图表示写入了 4 个字节后的状态
 
