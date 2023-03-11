@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      (Netty's note)
-subtitle:   (副标题)
+title:      Netty's note
+subtitle:   nullScientist's note
 date:       2023-3-11
 author:     nullscientist
 header-img: img/the-first.png
